@@ -30,7 +30,7 @@ class DataCollectGUI:
         
         tk.Radiobutton(entry_display_frame, var=self.backend.phone_var, value=True, text="Yes").grid(row=2, column=0)
         tk.Radiobutton(entry_display_frame, var=self.backend.phone_var, value=False, text="No").grid(row=2, column=1)
-        tk.Button(entry_display_frame, text="Add person", command=lambda: self.add_person()).grid(row=3, column=0)
+        tk.Button(entry_display_frame, text="Add person", command=lambda: self.backend.add_person(self.backend.name_var.get(), self.backend.age_var.get(), self.backend.phone_var.get())).grid(row=3, column=0)
 
     def show_data_state(self, frame):
         top_frame = tk.Frame(frame, bg='TOMATO')
@@ -41,11 +41,23 @@ class DataCollectGUI:
         change_state_button.grid(row=0, column=1, padx=20, pady=20)
         top_frame.grid(row=0, column=0, columnspan=2)
 
+        context_frame = tk.Frame(frame)
+        tk.Label(context_frame, text=f"Name: ").grid()
+        tk.Label(context_frame, text="Age:").grid()
+        tk.Label(context_frame, text="Phone:").grid()
+        context_frame.grid(row=1, column=0, padx=10, pady=20)
+
 class DataCollectBackend:
     def __init__(self):
-        data = []
-        person = []
+        self.people = []
         self.name_var, self.age_var, self.phone_var = tk.StringVar(), tk.StringVar(), tk.BooleanVar()
+    def add_person(self, name, age, phone):
+        if self.phone_var == True:
+            phone = "has a phone number"
+        else:
+            phone = "has no phone number"
+        self.people.append((name,age,phone))
+        print(self.people)
 
 if __name__ == '__main__':
     root = tk.Tk()
