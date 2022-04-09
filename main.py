@@ -15,9 +15,9 @@ class DataCollectGUI:
         top_frame.grid(row=0, column=0, columnspan=2)
 
         context_frame = tk.Frame(frame)
-        tk.Label(context_frame, text="Name:").grid()
+        tk.Label(context_frame, text="First Name:").grid()
         tk.Label(context_frame, text="Age:").grid()
-        tk.Label(context_frame, text="Phone:").grid()
+        tk.Label(context_frame, text="Do you have mobile:").grid()
         context_frame.grid(row=1, column=0, padx=10, pady=20)
 
         entry_display_frame = tk.Frame(frame)
@@ -42,22 +42,44 @@ class DataCollectGUI:
         top_frame.grid(row=0, column=0, columnspan=2)
 
         context_frame = tk.Frame(frame)
-        tk.Label(context_frame, text=f"Name: ").grid()
-        tk.Label(context_frame, text="Age:").grid()
-        tk.Label(context_frame, text="Phone:").grid()
+        tk.Label(context_frame, text=f"First Name: {self.backend.get_person()[0]}").grid()
+        tk.Label(context_frame, text=f"Age: {self.backend.get_person()[1]}").grid()
+        tk.Label(context_frame, text=f"{self.backend.get_person()[0]} {self.backend.get_person()[2]}").grid()
         context_frame.grid(row=1, column=0, padx=10, pady=20)
 
 class DataCollectBackend:
     def __init__(self):
         self.people = []
         self.name_var, self.age_var, self.phone_var = tk.StringVar(), tk.StringVar(), tk.BooleanVar()
+        self.index = 0
     def add_person(self, name, age, phone):
         if self.phone_var == True:
-            phone = "has a phone number"
+            phone = "has a mobile phone"
         else:
-            phone = "has no phone number"
+            phone = "doesn't have a mobile phone"
         self.people.append((name,age,phone))
         print(self.people)
+    def cycle_person(self, bRight):
+        if bRight:
+            if self.index == len(self.people)-1:
+                self.index = 0
+            else:
+                self.index += 1
+                self.name = self.people[self.index][0]
+                self.age = self.people[self.index][1]
+                self.phone = self.people[self.index][2]
+                return (self.name, self.age, self.phone)
+        else:
+            if self.index == 0:
+                self.index = len(self.people)-1
+            else:
+                self.index -= 1
+                self.name = self.people[self.index][0]
+                self.age = self.people[self.index][1]
+                self.phone = self.people[self.index][2]
+                return (self.name, self.age, self.phone)
+    def get_person(self):
+        return self.people[self.index]
 
 if __name__ == '__main__':
     root = tk.Tk()
