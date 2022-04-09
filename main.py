@@ -42,10 +42,27 @@ class DataCollectGUI:
         top_frame.grid(row=0, column=0, columnspan=2)
 
         context_frame = tk.Frame(frame)
-        tk.Label(context_frame, text=f"First Name: {self.backend.get_person()[0]}").grid()
-        tk.Label(context_frame, text=f"Age: {self.backend.get_person()[1]}").grid()
-        tk.Label(context_frame, text=f"{self.backend.get_person()[0]} {self.backend.get_person()[2]}").grid()
+        name, age, phone = self.backend.get_person()[0], self.backend.get_person()[1], self.backend.get_person()[2]
+        self.name_l = tk.Label(context_frame, text=f"First Name: {name}")
+        self.name_l.grid()
+        self.age_l = tk.Label(context_frame, text=f"Age: {age}")
+        self.age_l.grid()
+        self.phone_l = tk.Label(context_frame, text=f"{name} {phone}")
+        self.phone_l.grid()
         context_frame.grid(row=1, column=0, padx=10, pady=20)
+
+        controls_frame = tk.Frame(frame)
+        controls_frame.grid(row=2, column=0, columnspan=2)
+        tk.Button(controls_frame, text="Previous", command=lambda: self.update_date(False)).pack(side=tk.LEFT)
+        tk.Button(controls_frame, text="Next", command=lambda: self.update_date(True)).pack(side=tk.RIGHT)
+    def update_date(self, bRight):
+        self.backend.cycle_person(bRight)
+        name, age, phone = self.backend.get_person()[0], self.backend.get_person()[1], self.backend.get_person()[2]
+        self.name_l.configure(text=f"First Name: {name}")
+        self.age_l.configure(text=f"Age: {age}")
+        self.phone_l.configure(text=f"{name} {phone}")
+
+
 
 class DataCollectBackend:
     def __init__(self):
@@ -53,33 +70,31 @@ class DataCollectBackend:
         self.name_var, self.age_var, self.phone_var = tk.StringVar(), tk.StringVar(), tk.BooleanVar()
         self.index = 0
     def add_person(self, name, age, phone):
-        if self.phone_var == True:
+        if phone == True:
             phone = "has a mobile phone"
         else:
             phone = "doesn't have a mobile phone"
         self.people.append((name,age,phone))
-        print(self.people)
     def cycle_person(self, bRight):
+        print(self.index)
         if bRight:
             if self.index == len(self.people)-1:
                 self.index = 0
             else:
                 self.index += 1
-                self.name = self.people[self.index][0]
-                self.age = self.people[self.index][1]
-                self.phone = self.people[self.index][2]
-                return (self.name, self.age, self.phone)
         else:
             if self.index == 0:
                 self.index = len(self.people)-1
             else:
                 self.index -= 1
-                self.name = self.people[self.index][0]
-                self.age = self.people[self.index][1]
-                self.phone = self.people[self.index][2]
-                return (self.name, self.age, self.phone)
+        self.name = self.people[self.index][0]
+        self.age = self.people[self.index][1]
+        self.phone = self.people[self.index][2]
     def get_person(self):
-        return self.people[self.index]
+        if self.index == 0:
+            return self.people[0]
+        else:
+            return (self.name, self.age, self.phone)
 
 if __name__ == '__main__':
     root = tk.Tk()
